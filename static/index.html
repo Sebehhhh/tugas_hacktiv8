@@ -1,0 +1,124 @@
+<!-- static/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Status Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      #status {
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      #status p {
+        margin: 10px 0;
+        color: #555;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 5px;
+      }
+
+      .badge-aman {
+        background-color: #4caf50;
+        color: #fff;
+      }
+
+      .badge-siaga {
+        background-color: #ff9800;
+        color: #fff;
+      }
+
+      .badge-bahaya {
+        background-color: #f44336;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Status Page</h1>
+      <div id="status"></div>
+    </div>
+
+    <script>
+      function getStatus() {
+        fetch("/status")
+          .then((response) => response.json())
+          .then((data) => {
+            let waterStatusBadgeClass = "";
+            let windStatusBadgeClass = "";
+
+            switch (data.status_water) {
+              case "Aman":
+                waterStatusBadgeClass = "badge-aman";
+                break;
+              case "Siaga":
+                waterStatusBadgeClass = "badge-siaga";
+                break;
+              case "Bahaya":
+                waterStatusBadgeClass = "badge-bahaya";
+                break;
+            }
+
+            switch (data.status_wind) {
+              case "Aman":
+                windStatusBadgeClass = "badge-aman";
+                break;
+              case "Siaga":
+                windStatusBadgeClass = "badge-siaga";
+                break;
+              case "Bahaya":
+                windStatusBadgeClass = "badge-bahaya";
+                break;
+            }
+
+            document.getElementById("status").innerHTML = `
+              <p>Water: ${data.water} <span class="badge ${waterStatusBadgeClass}">${data.status_water}</span></p>
+              <p>Wind: ${data.wind} <span class="badge ${windStatusBadgeClass}">${data.status_wind}</span></p>
+            `;
+          });
+      }
+
+      // Refresh status setiap 5 detik
+      setInterval(getStatus, 5000);
+
+      // Load status saat halaman pertama kali dimuat
+      getStatus();
+    </script>
+  </body>
+</html>
